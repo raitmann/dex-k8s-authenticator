@@ -1,0 +1,57 @@
+{{ define "kubelogin-tab-content" }}
+
+<h3>Set up kubelogin credentials</h3>
+
+<p>Save the CA certificates:</p>
+
+{{ if .K8sCaURI }}
+<div class="command">
+  <button class="btn" style="float:right" data-clipboard-snippet="">
+    <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
+  </button>
+  <pre><code>curl --create-dirs -s {{ .K8sCaURI }} -o ${HOME}/.kube/certs/{{ .ClusterName }}/k8s-ca.crt</code></pre>
+</div>
+{{ end }}
+
+{{ if .IDPCaURI }}
+<div class="command">
+  <button class="btn" style="float:right" data-clipboard-snippet="">
+    <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
+  </button>
+  <pre><code>curl --create-dirs -s {{ .IDPCaURI }} -o ${HOME}/.kube/certs/{{ .ClusterName }}/idp-ca.crt</code></pre>
+</div>
+{{ end }}
+
+<h3>Configure kubeconfig with kubelogin</h3>
+
+<div class="command">
+  <button class="btn" style="float:right" data-clipboard-snippet="">
+    <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
+  </button>
+<pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClusterName }} \
+  --exec-command=kubelogin \
+  --exec-api-version=client.authentication.k8s.io/v1beta1 \
+  --exec-arg=get-token \
+  --exec-arg=--oidc-issuer-url={{ .Issuer }} \
+  --exec-arg=--oidc-client-id={{ .ClientID }} \
+  --exec-arg=--oidc-client-secret={{ .ClientSecret }} \
+  --exec-arg=--grant-type=device_code</code></pre>
+</div>
+
+<div class="command">
+  <button class="btn" style="float:right" data-clipboard-snippet="">
+    <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
+  </button>
+<pre><code>kubectl config set-context {{ .Username }}-{{ .ClusterName }} \
+  --cluster={{ .ClusterName }}{{ if .Namespace }} --namespace={{ .Namespace }}{{ end }} \
+  --user={{ .Username}}-{{.ClusterName }}</code></pre>
+</div>
+
+<div class="command">
+  <button class="btn" style="float:right" data-clipboard-snippet="">
+    <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
+  </button>
+<pre><code>kubectl config use-context {{ .Username }}-{{ .ClusterName }}</code></pre>
+</div>
+
+{{ end }}
