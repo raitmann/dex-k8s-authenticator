@@ -96,7 +96,7 @@ EOF</code></pre>
   --exec-arg=--oidc-extra-scope=groups \
   --exec-arg=--oidc-extra-scope=openid \
   --exec-arg=--insecure-skip-tls-verify=true \
-  --exec-arg=--grant-type=device_code \
+  --exec-arg=--grant-type=device-code \
   --exec-arg=--listen-address=0.0.0.0:443 \
   --exec-arg=--skip-open-browser=true \
   --exec-arg=--oidc-redirect-url-hostname={{ printf "%s/callback" .Issuer  }}</code></pre>
