@@ -29,13 +29,23 @@
     <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
   </button>
 <pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClusterName }} \
-  --exec-command=kubelogin \
-  --exec-api-version=client.authentication.k8s.io/v1beta1 \
+  --exec-api-version=client.authentication.k8s.io/v1 \
+  --exec-interactive-mode=Never \
+  --exec-command=kubectl \
+  --exec-arg=oidc-login \
   --exec-arg=get-token \
   --exec-arg=--oidc-issuer-url={{ .Issuer }} \
   --exec-arg=--oidc-client-id={{ .ClientID }} \
   --exec-arg=--oidc-client-secret={{ .ClientSecret }} \
-  --exec-arg=--grant-type=device_code</code></pre>
+  --exec-arg=--oidc-extra-scope=email \
+  --exec-arg=--oidc-extra-scope=profile \
+  --exec-arg=--oidc-extra-scope=groups \
+  --exec-arg=--oidc-extra-scope=openid \
+  --exec-arg=--insecure-skip-tls-verify=true \
+  --exec-arg=--grant-type=device_code \
+  --exec-arg=--listen-address=0.0.0.0:443 \
+  --exec-arg=--skip-open-browser=true \
+  --exec-arg=--oidc-redirect-url-hostname={{ printf "%s/callback" .Issuer  }}</code></pre>
 </div>
 
 <div class="command">
