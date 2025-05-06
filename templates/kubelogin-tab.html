@@ -1,8 +1,35 @@
 {{ define "kubelogin-tab-content" }}
 
-{{ if .IDPCaURI }}
-<h3>Copy IDP CA Certificate From URL</h3>
+<h3>Make sure your kubectl client has >= 1.30 version</h3>
 
+<h3>Install and Set Up kubectl</h3>
+
+<div class="command">
+
+  <button class="btn" style="float: right" data-clipboard-snippet="">
+    <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
+  </button>
+  <pre><code>curl -L0 {{ .KubectlURI }} -o kubectl && \
+    chmod +x kubectl && \
+    sudo mv kubectl /usr/local/bin/ && \
+    kubectl version --client</code></pre>
+</div>
+
+<h3>Install and Set Up kubelogin</h3>
+
+<div class="command">
+
+  <button class="btn" style="float: right" data-clipboard-snippet="">
+    <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
+  </button>
+  <pre><code>curl -L0 {{ .KubeloginURI }} -o kubectl-oidc_login && \
+    chmod +x kubectl-oidc_login && \
+    sudo mv kubectl-oidc_login /usr/local/bin/ && \
+    kubectl-oidc_login version</code></pre>
+</div>
+
+
+<!-- CA -->
 <p>Copy this CA Certificate and download it to your .kube directory</p>
 <div class="command">
 
@@ -78,11 +105,21 @@ EOF</code></pre>
 
 <h3>Configure kubeconfig with kubelogin</h3>
 
+<!-- <p>This command will remove {{ .Username }}-{{ .ClusterName }} user credentials if exists in kubeconfig</p>
+
+<div class="command">
+
+  <button class="btn" style="float: right" data-clipboard-snippet="">
+    <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt=""/>
+  </button>
+  <pre><code>kubectl config unset users.{{ .Username }}-{{ .ClusterName }}</code></pre>
+</div> -->
+
 <div class="command">
   <button class="btn" style="float:right" data-clipboard-snippet="">
     <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
   </button>
-<pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClusterName }} \
+<pre><code>kubectl config set-credentials {{ .Username }}-{{ .ClusterName }}-exec \
   --exec-api-version=client.authentication.k8s.io/v1 \
   --exec-interactive-mode=Never \
   --exec-command=kubectl \
@@ -106,16 +143,16 @@ EOF</code></pre>
   <button class="btn" style="float:right" data-clipboard-snippet="">
     <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
   </button>
-<pre><code>kubectl config set-context {{ .Username }}-{{ .ClusterName }} \
+<pre><code>kubectl config set-context {{ .Username }}-{{ .ClusterName }}-exec \
   --cluster={{ .ClusterName }}{{ if .Namespace }} --namespace={{ .Namespace }}{{ end }} \
-  --user={{ .Username}}-{{.ClusterName }}</code></pre>
+  --user={{ .Username}}-{{.ClusterName }}-exec</code></pre>
 </div>
 
 <div class="command">
   <button class="btn" style="float:right" data-clipboard-snippet="">
     <img class="clippy" width="13" src="{{ .Web_Path_Prefix }}static/clippy.svg" alt="">
   </button>
-<pre><code>kubectl config use-context {{ .Username }}-{{ .ClusterName }}</code></pre>
+<pre><code>kubectl config use-context {{ .Username }}-{{ .ClusterName }}-exec</code></pre>
 </div>
 
 {{ end }}
